@@ -1,0 +1,188 @@
+---
+// Replace this with your actual published Google Sheet CSV URL
+const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT.../pub?output=csv"; 
+
+let recruits = [];
+
+try {
+  const response = await fetch(sheetUrl);
+  const csvText = await response.text();
+
+  // Strip raw HTML markup if Google Sheets exports any
+  const cleanCsv = csvText.replace(/<[^>]*>/g, '');
+
+  // Split lines and drop the header row
+  const rows = cleanCsv.trim().split('\n').slice(1);
+
+  recruits = rows.map(row => {
+    // Clean up quotes and split by comma
+    const cols = row.split(',').map(c => c.replace(/^"|"$/g, '').trim());
+    return {
+      name: cols[0] || '',
+      pos: cols[1] || '',
+      team: cols[2] || '',
+      league: cols[3] || '',
+      commitYear: cols[4] || '',
+      ushlId: cols[5] || '',
+      gp: cols[6] || '0',
+      g: cols[7] || '0',
+      a: cols[8] || '0',
+      pts: cols[9] || '0'
+    };
+  });
+} catch (error) {
+  console.error("Error fetching sheet data:", error);
+}
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quinnipiac Hockey Recruit Tracker</title>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Quinnipiac Hockey Recruit Tracker</h1>
+        <p>Tracking future Bobcats across junior leagues in real time.</p>
+      </header>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Pos</th>
+              <th>Current Team</th>
+              <th>League</th>
+              <th>Commit Year</th>
+              <th>GP</th>
+              <th>G</th>
+              <th>A</th>
+              <th>PTS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {recruits.length > 0 ? (
+              recruits.map((player) => (
+                <tr>
+                  <td class="player-name">{player.name}</td>
+                  <td>{player.pos}</td>
+                  <td>{player.team}</td>
+                  <td><span class="badge">{player.league}</span></td>
+                  <td>{player.commitYear}</td>
+                  <td>{player.gp}</td>
+                  <td>{player.g}</td>
+                  <td>{player.a}</td>
+                  <td class="pts-cell">{player.pts}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colspan="9" class="no-data">No recruit data found. Check your Google Sheet URL.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <style>
+      :root {
+        --qu-navy: #0a192f;
+        --qu-gold: #e0a96d;
+        --card-bg: #112240;
+        --border-color: #233554;
+        --text-main: #e6f1ff;
+        --text-muted: #8892b0;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: var(--qu-navy);
+        color: var(--text-main);
+        margin: 0;
+        padding: 2rem 1rem;
+      }
+
+      main {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      header {
+        margin-bottom: 2rem;
+      }
+
+      h1 {
+        color: var(--qu-gold);
+        font-size: 2.25rem;
+        margin: 0 0 0.5rem 0;
+      }
+
+      p {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        margin: 0;
+      }
+
+      .table-container {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        overflow-x: auto;
+        box-shadow: 0 10px 30px -15px rgba(2, 12, 27, 0.7);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+
+      th, td {
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      th {
+        background-color: #0d1d38;
+        color: var(--qu-gold);
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      tr:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+      }
+
+      .player-name {
+        font-weight: 600;
+        color: #ffffff;
+      }
+
+      .pts-cell {
+        font-weight: 700;
+        color: var(--qu-gold);
+      }
+
+      .badge {
+        background-color: var(--border-color);
+        color: var(--text-main);
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+      }
+
+      .no-data {
+        text-align: center;
+        color: var(--text-muted);
+        padding: 2rem;
+      }
+    </style>
+  </body>
+</html>

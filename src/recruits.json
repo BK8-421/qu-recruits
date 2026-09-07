@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Chris Smith",
+    "pos": "C",
+    "team": "Chicago Steel",
+    "league": "USHL",
+    "commitYear": "2027",
+    "gp": 24,
+    "g": 10,
+    "a": 14,
+    "pts": 24
+  },
+  {
+    "name": "Alex Mercer",
+    "pos": "D",
+    "team": "Penticton Vees",
+    "league": "BCHL",
+    "commitYear": "2027",
+    "gp": 22,
+    "g": 3,
+    "a": 12,
+    "pts": 15
+  },
+  {
+    "name": "Liam Vance",
+    "pos": "LW",
+    "team": "USNTDP",
+    "league": "USHL",
+    "commitYear": "2028",
+    "gp": 20,
+    "g": 8,
+    "a": 7,
+    "pts": 15
+  }
+]
