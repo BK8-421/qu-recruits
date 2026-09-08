@@ -11,8 +11,8 @@ try {
   const rows = cleanCsv.trim().split('\n').slice(1);
 
   recruits = rows.map(row => {
-    // Robustly split CSV columns respecting quoted values
-    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$/).map(c => c.replace(/^"|"$/g, '').trim());
+    // Corrected regex with proper closing parenthesis
+    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
     return {
       name: cols[0] || '',
       pos: cols[1] || '',
