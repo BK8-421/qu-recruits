@@ -1,6 +1,5 @@
 ---
-// Replace this with your actual published Google Sheet CSV URL
-const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRImUBIlAMj_CPWCTIqCDlSSGggUDTg4SIIb6REMaR63fDt9uT7m16Cqkb-kn_7WVd0snW913Q4asjU/pub?gid=2043950204&single=true&output=csv"; 
+const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlMUBIIAMj_CPWCTlqCDISSGggUDtG4SIib6REMaR63fDt9uT7m16Cqkb-kn_7WVd0snW913Q4asjU/pub?gid=2043950204&single=true&output=csv"; 
 
 let recruits = [];
 
@@ -8,26 +7,22 @@ try {
   const response = await fetch(sheetUrl);
   const csvText = await response.text();
 
-  // Strip raw HTML markup if Google Sheets exports any
   const cleanCsv = csvText.replace(/<[^>]*>/g, '');
-
-  // Split lines and drop the header row
   const rows = cleanCsv.trim().split('\n').slice(1);
 
   recruits = rows.map(row => {
-    // Clean up quotes and split by comma
-    const cols = row.split(',').map(c => c.replace(/^"|"$/g, '').trim());
+    // Robustly split CSV columns respecting quoted values
+    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$/).map(c => c.replace(/^"|"$/g, '').trim());
     return {
       name: cols[0] || '',
       pos: cols[1] || '',
       team: cols[2] || '',
       league: cols[3] || '',
       commitYear: cols[4] || '',
-      ushlId: cols[5] || '',
-      gp: cols[6] || '0',
-      g: cols[7] || '0',
-      a: cols[8] || '0',
-      pts: cols[9] || '0'
+      gp: cols[5] || '0',
+      g: cols[6] || '0',
+      a: cols[7] || '0',
+      pts: cols[8] || '0'
     };
   });
 } catch (error) {
