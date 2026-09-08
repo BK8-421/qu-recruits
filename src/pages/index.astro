@@ -1,11 +1,10 @@
 ---
-const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlMUBIIAMj_CPWCTlqCDISSGggUDtG4SIib6REMaR63fDt9uT7m16Cqkb-kn_7WVd0snW913Q4asjU/pub?gid=2043950204&single=true&output=csv"; 
+const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlMUBIIAMj_CPWCTlqCDISSGggUDtG4SIib6REMaR63fDt9uT7m16Cqkb-kn_7WVd0snW913Q4asjU/gviz/tq?tqx=out:csv&gid=2043950204"; 
 
 let recruits = [];
 
 try {
   const response = await fetch(sheetUrl);
-  console.log("FETCH STATUS:", response.status, response.statusText);
   const csvText = await response.text();
 
   if (response.ok && !csvText.trim().startsWith('<')) {
@@ -39,20 +38,10 @@ try {
         a: cols[7] || '0',
         pts: cols[8] || '0'
       };
-    }).filter(p => p.name !== '');
-  } else {
-    console.warn("Fetch returned HTML or error status instead of CSV.");
+    }).filter(p => p.name !== '' && p.name !== 'Name');
   }
 } catch (error) {
   console.error("Error fetching sheet data:", error);
-}
-
-// Fallback mock data if fetch is blocked so your table populates immediately
-if (recruits.length === 0) {
-  recruits = [
-    { name: "Julien Maze", pos: "F", team: "Chilliwack Chiefs", league: "BCHL", commitYear: "2026", gp: "29", g: "12", a: "18", pts: "30" },
-    { name: "Sawyer Schmidt", pos: "F", team: "Dubuque Fighting Saints", league: "USHL", commitYear: "2026", gp: "25", g: "8", a: "14", pts: "22" }
-  ];
 }
 ---
 
