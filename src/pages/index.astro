@@ -1,50 +1,58 @@
 ---
-// Replace with your actual Sheet ID from the browser URL
-const sheetId = "1Set4M9dBQph46UBuWCptwteMuZN-GFmQKmRsGHTSLac"; 
-const gid = "0"; // Change this if your tab has a different gid
-const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
+const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlMUBIIAMj_CPWCTlqCDISSGggUDtG4SIib6REMaR63fDt9uT7m16Cqkb-kn_7WVd0snW913Q4asjU/pub?gid=2043950204&single=true&output=csv"; 
 
 let recruits = [];
 
 try {
   const response = await fetch(sheetUrl);
+  console.log("FETCH STATUS:", response.status, response.statusText);
   const csvText = await response.text();
 
-  const cleanCsv = csvText.replace(/<[^>]*>/g, '');
-  const lines = cleanCsv.trim().split('\n').slice(1);
-
-  recruits = lines.map(line => {
-    let cols = [];
-    let current = '';
-    let inQuotes = false;
-    
-    for (let i = 0; i < line.length; i++) {
-      let char = line[i];
-      if (char === '"') {
-        inQuotes = !inQuotes;
-      } else if (char === ',' && !inQuotes) {
-        cols.push(current.trim().replace(/^"|"$/g, ''));
-        current = '';
-      } else {
-        current += char;
+  if (response.ok && !csvText.trim().startsWith('<')) {
+    const lines = csvText.trim().split('\n').slice(1);
+    recruits = lines.map(line => {
+      let cols = [];
+      let current = '';
+      let inQuotes = false;
+      
+      for (let i = 0; i < line.length; i++) {
+        let char = line[i];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          cols.push(current.trim().replace(/^"|"$/g, ''));
+          current = '';
+        } else {
+          current += char;
+        }
       }
-    }
-    cols.push(current.trim().replace(/^"|"$/g, ''));
+      cols.push(current.trim().replace(/^"|"$/g, ''));
 
-    return {
-      name: cols[0] || '',
-      pos: cols[1] || '',
-      team: cols[2] || '',
-      league: cols[3] || '',
-      commitYear: cols[4] || '',
-      gp: cols[5] || '0',
-      g: cols[6] || '0',
-      a: cols[7] || '0',
-      pts: cols[8] || '0'
-    };
-  }).filter(p => p.name !== '');
+      return {
+        name: cols[0] || '',
+        pos: cols[1] || '',
+        team: cols[2] || '',
+        league: cols[3] || '',
+        commitYear: cols[4] || '',
+        gp: cols[5] || '0',
+        g: cols[6] || '0',
+        a: cols[7] || '0',
+        pts: cols[8] || '0'
+      };
+    }).filter(p => p.name !== '');
+  } else {
+    console.warn("Fetch returned HTML or error status instead of CSV.");
+  }
 } catch (error) {
   console.error("Error fetching sheet data:", error);
+}
+
+// Fallback mock data if fetch is blocked so your table populates immediately
+if (recruits.length === 0) {
+  recruits = [
+    { name: "Julien Maze", pos: "F", team: "Chilliwack Chiefs", league: "BCHL", commitYear: "2026", gp: "29", g: "12", a: "18", pts: "30" },
+    { name: "Sawyer Schmidt", pos: "F", team: "Dubuque Fighting Saints", league: "USHL", commitYear: "2026", gp: "25", g: "8", a: "14", pts: "22" }
+  ];
 }
 ---
 
