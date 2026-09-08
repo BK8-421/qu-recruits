@@ -1,7 +1,8 @@
 ---
 const sheetUrl = "https://docs.google.com/spreadsheets/d/1Set4M9dBQph46UBuWCptwteMuZN-GFmQKmRsGHTSLac/gviz/tq?tqx=out:csv&gid=2043950204";
 
-let recruits = [];
+let skaters = [];
+let goalies = [];
 
 try {
   const response = await fetch(sheetUrl);
@@ -9,7 +10,7 @@ try {
 
   if (response.ok && !csvText.trim().startsWith('<')) {
     const lines = csvText.trim().split('\n').slice(1);
-    recruits = lines.map(line => {
+    const recruits = lines.map(line => {
       let cols = [];
       let current = '';
       let inQuotes = false;
@@ -30,26 +31,37 @@ try {
       const pos = cols[1] || '';
       const isGoalie = pos.toUpperCase() === 'G';
 
-      return {
-        name: cols[0] || '',
-        pos: pos,
-        team: cols[2] || '',
-        league: cols[3] || '',
-        commitYear: cols[4] || '',
-        isGoalie: isGoalie,
-        // Skater stats: GP, G, A, PTS
-        gp: cols[7] || '0',
-        g: cols[8] || '0',
-        a: cols[9] || '0',
-        pts: cols[10] || '0',
-        // Goalie stats: GP, GAA (Goals Against Average), SV% (Save Percentage), W/L if applicable in columns 7-10
-        // Adjust these indexes depending on how your goalie columns are laid out in the sheet
-        goalieStat1: cols[7] || '0', // e.g., GP
-        goalieStat2: cols[8] || '0', // e.g., Record (W-L-T)
-        goalieStat3: cols[9] || '0', // e.g., GAA
-        goalieStat4: cols[10] || ''  // e.g., SV%
-      };
+      if (isGoalie) {
+        return {
+          type: 'goalie',
+          name: cols[0] || '',
+          pos: pos,
+          team: cols[2] || '',
+          league: cols[3] || '',
+          commitYear: cols[4] || '',
+          gp: cols[7] || '0',
+          record: cols[8] || '0-0',
+          gaa: cols[9] || '0.00',
+          svPct: cols[10] || '.000'
+        };
+      } else {
+        return {
+          type: 'skater',
+          name: cols[0] || '',
+          pos: pos,
+          team: cols[2] || '',
+          league: cols[3] || '',
+          commitYear: cols[4] || '',
+          gp: cols[7] || '0',
+          g: cols[8] || '0',
+          a: cols[9] || '0',
+          pts: cols[10] || '0'
+        };
+      }
     }).filter(p => p.name !== '' && p.name !== 'Name');
+
+    skaters = recruits.filter(p => p.type === 'skater');
+    goalies = recruits.filter(p => p.type === 'goalie');
   }
 } catch (error) {
   console.error("Error fetching sheet data:", error);
@@ -70,94 +82,136 @@ try {
         <p>Tracking future Bobcats across junior leagues in real time.</p>
       </header>
 
-      <div class="table-container">
-        <table id="recruits-table">
-          <thead>
-            <tr>
-              <th data-column="0" class="sortable">Name <span>↕</span></th>
-              <th data-column="1" class="sortable">Pos <span>↕</span></th>
-              <th data-column="2" class="sortable">Current Team <span>↕</span></th>
-              <th data-column="3" class="sortable">League <span>↕</span></th>
-              <th data-column="4" class="sortable">Commit Year <span>↕</span></th>
-              <th data-column="5" class="sortable">GP <span>↕</span></th>
-              <th data-column="6" class="sortable">G / W <span>↕</span></th>
-              <th data-column="7" class="sortable">A / GAA <span>↕</span></th>
-              <th data-column="8" class="sortable">PTS / SV% <span>↕</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            {recruits.length > 0 ? (
-              recruits.map((player) => (
-                <tr>
-                  <td class="player-name">{player.name}</td>
-                  <td>{player.pos}</td>
-                  <td>{player.team}</td>
-                  <td><span class="badge">{player.league}</span></td>
-                  <td>{player.commitYear}</td>
-                  {player.isGoalie ? (
-                    <>
-                      <td>{player.goalieStat1}</td>
-                      <td>{player.goalieStat2}</td>
-                      <td>{player.goalieStat3}</td>
-                      <td class="pts-cell">{player.goalieStat4}</td>
-                    </>
-                  ) : (
-                    <>
-                      <td>{player.gp}</td>
-                      <td>{player.g}</td>
-                      <td>{player.a}</td>
-                      <td class="pts-cell">{player.pts}</td>
-                    </>
-                  )}
-                </tr>
-              ))
-            ) : (
+      <!-- Skaters Section -->
+      <section class="table-section">
+        <h2>Skaters</h2>
+        <div class="table-container">
+          <table id="skaters-table">
+            <thead>
               <tr>
-                <td colspan="9" class="no-data">No recruit data found. Check your Google Sheet URL.</td>
+                <th data-column="0" class="sortable">Name <span>↕</span></th>
+                <th data-column="1" class="sortable">Pos <span>↕</span></th>
+                <th data-column="2" class="sortable">Current Team <span>↕</span></th>
+                <th data-column="3" class="sortable">League <span>↕</span></th>
+                <th data-column="4" class="sortable">Commit Year <span>↕</span></th>
+                <th data-column="5" class="sortable">GP <span>↕</span></th>
+                <th data-column="6" class="sortable">G <span>↕</span></th>
+                <th data-column="7" class="sortable">A <span>↕</span></th>
+                <th data-column="8" class="sortable">PTS <span>↕</span></th>
               </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {skaters.length > 0 ? (
+                skaters.map((player) => (
+                  <tr>
+                    <td class="player-name">{player.name}</td>
+                    <td>{player.pos}</td>
+                    <td>{player.team}</td>
+                    <td><span class="badge">{player.league}</span></td>
+                    <td>{player.commitYear}</td>
+                    <td>{player.gp}</td>
+                    <td>{player.g}</td>
+                    <td>{player.a}</td>
+                    <td class="pts-cell">{player.pts}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colspan="9" class="no-data">No skater data found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Goalies Section -->
+      <section class="table-section">
+        <h2>Goalies</h2>
+        <div class="table-container">
+          <table id="goalies-table">
+            <thead>
+              <tr>
+                <th data-column="0" class="sortable">Name <span>↕</span></th>
+                <th data-column="1" class="sortable">Pos <span>↕</span></th>
+                <th data-column="2" class="sortable">Current Team <span>↕</span></th>
+                <th data-column="3" class="sortable">League <span>↕</span></th>
+                <th data-column="4" class="sortable">Commit Year <span>↕</span></th>
+                <th data-column="5" class="sortable">GP <span>↕</span></th>
+                <th data-column="6" class="sortable">Record (W-L) <span>↕</span></th>
+                <th data-column="7" class="sortable">GAA <span>↕</span></th>
+                <th data-column="8" class="sortable">SV% <span>↕</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              {goalies.length > 0 ? (
+                goalies.map((goalie) => (
+                  <tr>
+                    <td class="player-name">{goalie.name}</td>
+                    <td>{goalie.pos}</td>
+                    <td>{goalie.team}</td>
+                    <td><span class="badge">{goalie.league}</span></td>
+                    <td>{goalie.commitYear}</td>
+                    <td>{goalie.gp}</td>
+                    <td>{goalie.record}</td>
+                    <td>{goalie.gaa}</td>
+                    <td class="pts-cell">{goalie.svPct}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colspan="9" class="no-data">No goalie data found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </main>
 
     <script>
-      const table = document.getElementById('recruits-table');
-      const headers = table.querySelectorAll('th.sortable');
-      let currentSortColumn = -1;
-      let isAscending = true;
+      function makeTableSortable(tableId) {
+        const table = document.getElementById(tableId);
+        if (!table) return;
+        const headers = table.querySelectorAll('th.sortable');
+        let currentSortColumn = -1;
+        let isAscending = true;
 
-      headers.forEach(header => {
-        header.addEventListener('click', () => {
-          const colIndex = parseInt(header.getAttribute('data-column'));
-          const tbody = table.querySelector('tbody');
-          const rows = Array.from(tbody.querySelectorAll('tr'));
+        headers.forEach(header => {
+          header.addEventListener('click', () => {
+            const colIndex = parseInt(header.getAttribute('data-column'));
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
 
-          if (currentSortColumn === colIndex) {
-            isAscending = !isAscending;
-          } else {
-            currentSortColumn = colIndex;
-            isAscending = true;
-          }
+            if (currentSortColumn === colIndex) {
+              isAscending = !isAscending;
+            } else {
+              currentSortColumn = colIndex;
+              isAscending = true;
+            }
 
-          headers.forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));
-          header.classList.add(isAscending ? 'sorted-asc' : 'sorted-desc');
+            headers.forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));
+            header.classList.add(isAscending ? 'sorted-asc' : 'sorted-desc');
 
-          rows.sort((a, b) => {
-            let cellA = a.children[colIndex].textContent.trim();
-            let cellB = b.children[colIndex].textContent.trim();
+            rows.sort((a, b) => {
+              let cellA = a.children[colIndex].textContent.trim();
+              let cellB = b.children[colIndex].textContent.trim();
 
-            let valA = isNaN(cellA) ? cellA.toLowerCase() : parseFloat(cellA);
-            let valB = isNaN(cellB) ? cellB.toLowerCase() : parseFloat(cellB);
+              let valA = isNaN(cellA) ? cellA.toLowerCase() : parseFloat(cellA);
+              let valB = isNaN(cellB) ? cellB.toLowerCase() : parseFloat(cellB);
 
-            if (valA < valB) return isAscending ? -1 : 1;
-            if (valA > valB) return isAscending ? 1 : -1;
-            return 0;
+              if (valA < valB) return isAscending ? -1 : 1;
+              if (valA > valB) return isAscending ? 1 : -1;
+              return 0;
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
           });
-
-          rows.forEach(row => tbody.appendChild(row));
         });
-      });
+      }
+
+      makeTableSortable('skaters-table');
+      makeTableSortable('goalies-table');
     </script>
 
     <style>
@@ -197,6 +251,18 @@ try {
         color: var(--text-muted);
         font-size: 1.1rem;
         margin: 0;
+      }
+
+      .table-section {
+        margin-bottom: 2.5rem;
+      }
+
+      .table-section h2 {
+        color: var(--text-main);
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid var(--border-color);
+        padding-bottom: 0.5rem;
       }
 
       .table-container {
