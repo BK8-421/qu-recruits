@@ -27,16 +27,27 @@ try {
       }
       cols.push(current.trim().replace(/^"|"$/g, ''));
 
+      const pos = cols[1] || '';
+      const isGoalie = pos.toUpperCase() === 'G';
+
       return {
         name: cols[0] || '',
-        pos: cols[1] || '',
+        pos: pos,
         team: cols[2] || '',
         league: cols[3] || '',
         commitYear: cols[4] || '',
+        isGoalie: isGoalie,
+        // Skater stats: GP, G, A, PTS
         gp: cols[7] || '0',
         g: cols[8] || '0',
         a: cols[9] || '0',
-        pts: cols[10] || '0'
+        pts: cols[10] || '0',
+        // Goalie stats: GP, GAA (Goals Against Average), SV% (Save Percentage), W/L if applicable in columns 7-10
+        // Adjust these indexes depending on how your goalie columns are laid out in the sheet
+        goalieStat1: cols[7] || '0', // e.g., GP
+        goalieStat2: cols[8] || '0', // e.g., Record (W-L-T)
+        goalieStat3: cols[9] || '0', // e.g., GAA
+        goalieStat4: cols[10] || ''  // e.g., SV%
       };
     }).filter(p => p.name !== '' && p.name !== 'Name');
   }
@@ -69,9 +80,9 @@ try {
               <th data-column="3" class="sortable">League <span>↕</span></th>
               <th data-column="4" class="sortable">Commit Year <span>↕</span></th>
               <th data-column="5" class="sortable">GP <span>↕</span></th>
-              <th data-column="6" class="sortable">G <span>↕</span></th>
-              <th data-column="7" class="sortable">A <span>↕</span></th>
-              <th data-column="8" class="sortable">PTS <span>↕</span></th>
+              <th data-column="6" class="sortable">G / W <span>↕</span></th>
+              <th data-column="7" class="sortable">A / GAA <span>↕</span></th>
+              <th data-column="8" class="sortable">PTS / SV% <span>↕</span></th>
             </tr>
           </thead>
           <tbody>
@@ -83,10 +94,21 @@ try {
                   <td>{player.team}</td>
                   <td><span class="badge">{player.league}</span></td>
                   <td>{player.commitYear}</td>
-                  <td>{player.gp}</td>
-                  <td>{player.g}</td>
-                  <td>{player.a}</td>
-                  <td class="pts-cell">{player.pts}</td>
+                  {player.isGoalie ? (
+                    <>
+                      <td>{player.goalieStat1}</td>
+                      <td>{player.goalieStat2}</td>
+                      <td>{player.goalieStat3}</td>
+                      <td class="pts-cell">{player.goalieStat4}</td>
+                    </>
+                  ) : (
+                    <>
+                      <td>{player.gp}</td>
+                      <td>{player.g}</td>
+                      <td>{player.a}</td>
+                      <td class="pts-cell">{player.pts}</td>
+                    </>
+                  )}
                 </tr>
               ))
             ) : (
