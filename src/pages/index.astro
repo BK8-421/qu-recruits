@@ -1,17 +1,14 @@
 ---
-const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlMUBIIAMj_CPWCTlqCDISSGggUDtG4SIib6REMaR63fDt9uT7m16Cqkb-kn_7WVd0snW913Q4asjU/pub?gid=2043950204&single=true&output=csv"; 
+const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlMUBIIAMj_CPWCTlqCDISSGggUDtG4SIib6REMaR63fDt9uT7m16Cqkb-kn_7WVd0snW913Q4asjU/export?format=csv&gid=2043950204"; 
 
 let recruits = [];
 
 try {
   const response = await fetch(sheetUrl);
   const csvText = await response.text();
-  console.log("RAW CSV LENGTH:", csvText.length);
-  console.log("RAW CSV START:", csvText.substring(0, 100));
 
   const cleanCsv = csvText.replace(/<[^>]*>/g, '');
   const lines = cleanCsv.trim().split('\n').slice(1);
-  console.log("PARSED LINES COUNT:", lines.length);
 
   recruits = lines.map(line => {
     let cols = [];
