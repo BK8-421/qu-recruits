@@ -1,5 +1,5 @@
 ---
-const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlMUBIIAMj_CPWCTlqCDISSGggUDtG4SIib6REMaR63fDt9uT7m16Cqkb-kn_7WVd0snW913Q4asjU/gviz/tq?tqx=out:csv&gid=2043950204"; 
+const sheetUrl = "https://docs.google.com/spreadsheets/d/1Set4M9dBQph46UBuWCptwteMuZN-GFmQKmRsGHTSLac/gviz/tq?tqx=out:csv&gid=2043950204";
 
 let recruits = [];
 
@@ -33,10 +33,10 @@ try {
         team: cols[2] || '',
         league: cols[3] || '',
         commitYear: cols[4] || '',
-        gp: cols[5] || '0',
-        g: cols[6] || '0',
-        a: cols[7] || '0',
-        pts: cols[8] || '0'
+        gp: cols[7] || '0',
+        g: cols[8] || '0',
+        a: cols[9] || '0',
+        pts: cols[10] || '0'
       };
     }).filter(p => p.name !== '' && p.name !== 'Name');
   }
