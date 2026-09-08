@@ -28,8 +28,8 @@ try {
       }
       cols.push(current.trim().replace(/^"|"$/g, ''));
 
-      const pos = cols[1] || '';
-      const isGoalie = pos.toUpperCase() === 'G';
+      const pos = (cols[1] || '').trim().toUpperCase();
+      const isGoalie = pos === 'G';
 
       if (isGoalie) {
         return {
