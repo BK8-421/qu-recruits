@@ -1,5 +1,8 @@
 ---
-const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRlMUBIIAMj_CPWCTlqCDISSGggUDtG4SIib6REMaR63fDt9uT7m16Cqkb-kn_7WVd0snW913Q4asjU/pub?output=csv";
+// Replace with your actual Sheet ID from the browser URL
+const sheetId = "1Set4M9dBQph46UBuWCptwteMuZN-GFmQKmRsGHTSLac"; 
+const gid = "0"; // Change this if your tab has a different gid
+const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
 
 let recruits = [];
 
