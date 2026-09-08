@@ -6,9 +6,12 @@ let recruits = [];
 try {
   const response = await fetch(sheetUrl);
   const csvText = await response.text();
+  console.log("RAW CSV LENGTH:", csvText.length);
+  console.log("RAW CSV START:", csvText.substring(0, 100));
 
   const cleanCsv = csvText.replace(/<[^>]*>/g, '');
   const lines = cleanCsv.trim().split('\n').slice(1);
+  console.log("PARSED LINES COUNT:", lines.length);
 
   recruits = lines.map(line => {
     let cols = [];
