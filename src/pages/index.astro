@@ -38,7 +38,7 @@ try {
           pos: pos,
           team: cols[2] || '',
           league: cols[3] || '',
-          commitYear: cols[4] || '',
+          dob: cols[4] || '',
           gp: cols[7] || '0',
           record: cols[8] || '0-0',
           gaa: cols[9] || '0.00',
@@ -51,7 +51,7 @@ try {
           pos: pos,
           team: cols[2] || '',
           league: cols[3] || '',
-          commitYear: cols[4] || '',
+          dob: cols[4] || '',
           gp: cols[7] || '0',
           g: cols[8] || '0',
           a: cols[9] || '0',
@@ -93,7 +93,7 @@ try {
                 <th data-column="1" class="sortable">Pos <span>↕</span></th>
                 <th data-column="2" class="sortable">Current Team <span>↕</span></th>
                 <th data-column="3" class="sortable">League <span>↕</span></th>
-                <th data-column="4" class="sortable">Commit Year <span>↕</span></th>
+                <th data-column="4" class="sortable">Birthday <span>↕</span></th>
                 <th data-column="5" class="sortable">GP <span>↕</span></th>
                 <th data-column="6" class="sortable">G <span>↕</span></th>
                 <th data-column="7" class="sortable">A <span>↕</span></th>
@@ -108,7 +108,7 @@ try {
                     <td>{player.pos}</td>
                     <td>{player.team}</td>
                     <td><span class="badge">{player.league}</span></td>
-                    <td>{player.commitYear}</td>
+                    <td>{player.dob}</td>
                     <td>{player.gp}</td>
                     <td>{player.g}</td>
                     <td>{player.a}</td>
@@ -136,7 +136,7 @@ try {
                 <th data-column="1" class="sortable">Pos <span>↕</span></th>
                 <th data-column="2" class="sortable">Current Team <span>↕</span></th>
                 <th data-column="3" class="sortable">League <span>↕</span></th>
-                <th data-column="4" class="sortable">Commit Year <span>↕</span></th>
+                <th data-column="4" class="sortable">Birthday <span>↕</span></th>
                 <th data-column="5" class="sortable">GP <span>↕</span></th>
                 <th data-column="6" class="sortable">Record (W-L) <span>↕</span></th>
                 <th data-column="7" class="sortable">GAA <span>↕</span></th>
@@ -151,7 +151,7 @@ try {
                     <td>{goalie.pos}</td>
                     <td>{goalie.team}</td>
                     <td><span class="badge">{goalie.league}</span></td>
-                    <td>{goalie.commitYear}</td>
+                    <td>{goalie.dob}</td>
                     <td>{goalie.gp}</td>
                     <td>{goalie.record}</td>
                     <td>{goalie.gaa}</td>
@@ -233,7 +233,7 @@ try {
       }
 
       main {
-        max-width: 1000px;
+        max-width: 1050px;
         margin: 0 auto;
       }
 
