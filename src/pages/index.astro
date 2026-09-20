@@ -205,6 +205,16 @@ try {
               let cellA = a.children[colIndex].textContent.trim();
               let cellB = b.children[colIndex].textContent.trim();
 
+              // Blank cells (e.g. FO% for leagues that don't track faceoffs, or
+              // PPG for goalies) should always sort to the bottom regardless of
+              // sort direction, rather than being fed through parseFloat('') —
+              // which is NaN and breaks comparisons silently.
+              const aEmpty = cellA === '';
+              const bEmpty = cellB === '';
+              if (aEmpty && bEmpty) return 0;
+              if (aEmpty) return 1;
+              if (bEmpty) return -1;
+
               let valA = isNaN(cellA) ? cellA.toLowerCase() : parseFloat(cellA);
               let valB = isNaN(cellB) ? cellB.toLowerCase() : parseFloat(cellB);
 
