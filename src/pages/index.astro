@@ -64,6 +64,8 @@ try {
 
     skaters = recruits.filter(p => p.type === 'skater');
     goalies = recruits.filter(p => p.type === 'goalie');
+
+    skaters.sort((a, b) => (parseFloat(b.pts) || 0) - (parseFloat(a.pts) || 0));
   }
 } catch (error) {
   console.error("Error fetching sheet data:", error);
@@ -99,7 +101,7 @@ try {
                 <th data-column="5" class="sortable">GP <span>↕</span></th>
                 <th data-column="6" class="sortable">G <span>↕</span></th>
                 <th data-column="7" class="sortable">A <span>↕</span></th>
-                <th data-column="8" class="sortable">PTS <span>↕</span></th>
+                <th data-column="8" class="sortable sorted-desc">PTS <span>↕</span></th>
                 <th data-column="9" class="sortable">PPG <span>↕</span></th>
                 <th data-column="10" class="sortable">FO% <span>↕</span></th>
               </tr>
@@ -176,12 +178,12 @@ try {
     </main>
 
     <script>
-      function makeTableSortable(tableId) {
+      function makeTableSortable(tableId, initialColumn = -1, initialAscending = true) {
         const table = document.getElementById(tableId);
         if (!table) return;
         const headers = table.querySelectorAll('th.sortable');
-        let currentSortColumn = -1;
-        let isAscending = true;
+        let currentSortColumn = initialColumn;
+        let isAscending = initialAscending;
 
         headers.forEach(header => {
           header.addEventListener('click', () => {
@@ -216,7 +218,7 @@ try {
         });
       }
 
-      makeTableSortable('skaters-table');
+      makeTableSortable('skaters-table', 8, false);
       makeTableSortable('goalies-table');
     </script>
 
