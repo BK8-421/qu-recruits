@@ -278,6 +278,7 @@ try {
         border: 1px solid var(--border-color);
         border-radius: 8px;
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
         box-shadow: 0 10px 30px -15px rgba(2, 12, 27, 0.7);
       }
 
@@ -290,6 +291,31 @@ try {
       th, td {
         padding: 14px 18px;
         border-bottom: 1px solid var(--border-color);
+      }
+
+      /* Freeze the first (Name) column so it stays visible while scrolling
+         horizontally on narrow/mobile screens. Needs an explicit background
+         on each cell since sticky elements are opaque over whatever scrolls
+         beneath them. */
+      th:first-child,
+      td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        box-shadow: 4px 0 6px -4px rgba(0, 0, 0, 0.4);
+      }
+
+      th:first-child {
+        z-index: 3;
+        background-color: #0d1d38;
+      }
+
+      td:first-child {
+        background-color: var(--card-bg);
+      }
+
+      tr:hover td:first-child {
+        background-color: #182946;
       }
 
       th {
