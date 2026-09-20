@@ -55,7 +55,9 @@ try {
           gp: cols[7] || '0',
           g: cols[8] || '0',
           a: cols[9] || '0',
-          pts: cols[10] || '0'
+          pts: cols[10] || '0',
+          ppg: cols[11] || '',
+          faceoffPct: cols[12] || ''
         };
       }
     }).filter(p => p.name !== '' && p.name !== 'Name');
@@ -98,6 +100,8 @@ try {
                 <th data-column="6" class="sortable">G <span>↕</span></th>
                 <th data-column="7" class="sortable">A <span>↕</span></th>
                 <th data-column="8" class="sortable">PTS <span>↕</span></th>
+                <th data-column="9" class="sortable">PPG <span>↕</span></th>
+                <th data-column="10" class="sortable">FO% <span>↕</span></th>
               </tr>
             </thead>
             <tbody>
@@ -113,11 +117,13 @@ try {
                     <td>{player.g}</td>
                     <td>{player.a}</td>
                     <td class="pts-cell">{player.pts}</td>
+                    <td>{player.ppg}</td>
+                    <td>{player.faceoffPct}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colspan="9" class="no-data">No skater data found.</td>
+                  <td colspan="11" class="no-data">No skater data found.</td>
                 </tr>
               )}
             </tbody>
